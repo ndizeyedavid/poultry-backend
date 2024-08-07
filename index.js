@@ -14,12 +14,11 @@ const db = mysql.createConnection({
     user: "root",
     password: "",
     database: "sensor_db"
-}, (err, data)=>{
-    if (err) console.log('Failed to connect to database');
-    console.log('Database connected successfuly')
-})
-
-
+});
+db.on('error', (err) => {
+    return console.log('Database connection failed');
+});
+console.log('Databse connected successfuly')
 app.get('/data', (req, res)=>{
     const sql = "SELECT * FROM SensorData";
     db.query(sql, (err, data)=>{
