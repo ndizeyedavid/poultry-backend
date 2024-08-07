@@ -1,8 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import mysql from 'mysql2'
-
-const port = 9091; // now don't judge me, i was just testing lol😁
+import dotenv from 'dotenv';
+dotenv.config();
+const port = process.env.PORT;
+const host = '0.0.0.0';
 const app = express();
 
 app.use(cors());
@@ -11,7 +13,7 @@ const db = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "",
-    database: "esp"
+    database: "sensor_db"
 })
 
 
@@ -32,5 +34,5 @@ app.get('/average', (req, res)=>{
 });
 
 app.listen(port, ()=>{
-    console.log('app running on port ', port)
+    console.log('server running on: ' + host + ':' + port)
 })
