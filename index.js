@@ -35,6 +35,9 @@ app.get('/average', (req, res)=>{
     })
 });
 
+app.get('/test', (req, res)=>{
+    res.json({msg: "Api working well"});
+})
 app.listen(port, ()=>{
     console.log('server running on: ' + host + ':' + port)
 })
