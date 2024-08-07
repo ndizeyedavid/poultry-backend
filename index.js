@@ -10,17 +10,21 @@ const app = express();
 app.use(cors());
 
 const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "sensor_db"
+    host: "i52.h.filess.io",
+    user: "testdb12234_distancehe",
+    password: "74ab35df9812ba304bd85706df45ae06f9746142",
+    database: "testdb12234_distancehe",
+    port: "3305"
 });
-db.on('error', (err) => {
-    return console.log('Database connection failed');
+db.on('err', (err) => {
+    console.log('Database connection failed');
 });
-console.log('Databse connected successfuly')
+
+db.on('connect', (e)=>{
+    console.log('Databse connected');
+})
 app.get('/data', (req, res)=>{
-    const sql = "SELECT * FROM SensorData";
+    const sql = "SELECT * FROM sensordata";
     db.query(sql, (err, data)=>{
         if (err) return console.log(err);
         return res.json(data);
@@ -28,7 +32,7 @@ app.get('/data', (req, res)=>{
 })
 
 app.get('/average', (req, res)=>{
-    const sql = "SELECT ROUsND(AVG(value1), 1) as value1, ROUND(AVG(value2), 1) as value2, ROUND(AVG(value3), 1) as value3 FROM sensordata;"
+    const sql = "SELECT ROUND(AVG(value1), 1) as value1, ROUND(AVG(value2), 1) as value2, ROUND(AVG(value3), 1) as value3 FROM sensordata;"
     db.query(sql, (err, data)=>{
         if (err) return res.json(err);
         return res.json(data);
