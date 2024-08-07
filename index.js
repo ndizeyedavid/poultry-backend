@@ -14,6 +14,9 @@ const db = mysql.createConnection({
     user: "root",
     password: "",
     database: "sensor_db"
+}, (err, data)=>{
+    if (err) console.log('Failed to connect to database');
+    console.log('Database connected successfuly')
 })
 
 
