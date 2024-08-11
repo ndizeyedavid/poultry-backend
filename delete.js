@@ -18,15 +18,14 @@ db.on('connect', (e)=>{
     console.log('Databse connected');
 })
 
-function insertThis(){
-    const sql = `
-    INSERT INTO sensordata(temperature, humidity, ammonia) 
-    VALUES('${Math.floor(Math.random() * 80)}', '${Math.floor(Math.random() * 80)}', '${Math.floor(Math.random() * 80)}')
-    `;
+function deleteAll(){
+    const sql = `DELETE FROM sensordata`;
     db.query(sql, (err, data)=>{
-        if (err) return res.json(err);
-        console.log("Data Inserted");
+        if (err) return console.log("An error occured");
+        console.log("Table reseted");
         // return res.json(data);
     });
 }
-setInterval(insertThis, 1500);
+
+deleteAll();
+// setInterval(deleteAll, 300000);

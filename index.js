@@ -23,21 +23,68 @@ db.on('err', (err) => {
 db.on('connect', (e)=>{
     console.log('Databse connected');
 })
+
 app.get('/data', (req, res)=>{
     const sql = "SELECT * FROM sensordata";
     db.query(sql, (err, data)=>{
-        if (err) return console.log(err);
+        if (err) return res.json(err);
         return res.json(data);
     })
 })
 
 app.get('/average', (req, res)=>{
-    const sql = "SELECT ROUND(AVG(value1), 1) as value1, ROUND(AVG(value2), 1) as value2, ROUND(AVG(value3), 1) as value3 FROM sensordata;"
+    const sql = "SELECT ROUND(AVG(temperature), 1) as temperature, ROUND(AVG(humidity), 1) as humidity, ROUND(AVG(ammonia), 1) as ammonia FROM sensordata;"
     db.query(sql, (err, data)=>{
         if (err) return res.json(err);
         return res.json(data);
     })
 });
+
+// controls
+app.get('/fetchcontrols', (req, res)=>{
+    const sql = "SELECT * FROM controls";
+    db.query(sql, (err, data)=>{
+        if (err) return console.log('An error occured');
+        res.json(data);
+    });
+})
+
+app.get('/controls', (req, res)=>{
+    let control = req.query.control;
+    db.query(`SELECT ${control} FROM controls`, (err, data)=>{
+        let value;
+        if (data[0].fan == 0){
+            value = 1;
+        }
+        if (data[0].fan == 1){
+            value = 0;
+        }
+        if (data[0].buzzer == 0){
+            value = 1;
+        }
+        if (data[0].buzzer == 1){
+            value = 0;
+        }
+        if (data[0].led == 0){
+            value = 1;
+        }
+        if (data[0].led == 1){
+            value = 0;
+        }
+
+        // console.log(value)
+        const sql = `UPDATE controls SET ${control} = ${value}`;
+        db.query(sql, (err, data)=>{
+            // if (err) return console.log(err);
+            if (err) return console.log('An error occured');
+            // console.log(data)
+            res.json({status: 200, changed: control, on: value});
+            // console.log("Data changed")
+            // res.json()
+        })
+    })
+    
+})
 
 app.get('/test', (req, res)=>{
     res.json({msg: "Api working well"});
