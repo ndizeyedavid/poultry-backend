@@ -86,6 +86,22 @@ app.get('/controls', (req, res)=>{
     
 })
 
+app.get('/insert', (req, res)=>{
+    let date = new Date();
+    let now = date.getDate() + '-' + date.getMonth() + '-' + date.getFullYear() + '  ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+    const query = req.query;
+
+    const temp = query.temperature;
+    const humidity = query.humidity;
+    const ammonia = query.ammonia;
+    
+    const sql = 'INSERT INTO sensordata(temperature, humidity, ammonia) VALUES(? , ? , ?)'
+    db.query(sql, [temp, humidity, ammonia], (err, data)=>{
+        if (err) return res.json({err: "An error occured trying to insert data in database"});
+        res.json({status: 200, msg: "Data inserted in the database", timestamp: now});
+    })
+})
+
 app.get('/test', (req, res)=>{
     res.json({msg: "Api working well"});
 })

@@ -24,7 +24,7 @@ function insertThis(){
     VALUES('${Math.floor(Math.random() * 80)}', '${Math.floor(Math.random() * 80)}', '${Math.floor(Math.random() * 80)}')
     `;
     db.query(sql, (err, data)=>{
-        if (err) return res.json(err);
+        if (err) return console.log(err);
         console.log("Data Inserted");
         // return res.json(data);
     });
