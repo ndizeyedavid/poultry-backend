@@ -8,16 +8,15 @@ const host = '0.0.0.0';
 const app = express();
 
 app.use(cors());
-
 const db = mysql.createConnection({
-    host: "i52.h.filess.io",
-    user: "testdb12234_distancehe",
-    password: "74ab35df9812ba304bd85706df45ae06f9746142",
-    database: "testdb12234_distancehe",
+    host: "ide.h.filess.io",
+    user: "chicken_mightwagon",
+    password: "62a2fb2b1d802aec52e615eafd201ca22bc6f23b",
+    database: "chicken_mightwagon",
     port: "3305"
 });
-db.on('err', (err) => {
-    console.log('Database connection failed');
+db.on('error', (err) => {
+    console.log('Database connection failed \n' + err);
 });
 
 db.on('connect', (e)=>{
@@ -25,7 +24,7 @@ db.on('connect', (e)=>{
 })
 
 app.get('/data', (req, res)=>{
-    const sql = "SELECT * FROM sensordata";
+    const sql = "SELECT * FROM tbl_temperature";
     db.query(sql, (err, data)=>{
         if (err) return res.json(err);
         return res.json(data);
@@ -33,7 +32,7 @@ app.get('/data', (req, res)=>{
 })
 
 app.get('/average', (req, res)=>{
-    const sql = "SELECT ROUND(AVG(temperature), 1) as temperature, ROUND(AVG(humidity), 1) as humidity, ROUND(AVG(ammonia), 1) as ammonia FROM sensordata;"
+    const sql = "SELECT ROUND(AVG(temperature), 1) as temperature, ROUND(AVG(humidity), 1) as humidity, ROUND(AVG(gaz), 1) as ammonia FROM tbl_temperature;"
     db.query(sql, (err, data)=>{
         if (err) return res.json(err);
         return res.json(data);
@@ -42,7 +41,7 @@ app.get('/average', (req, res)=>{
 
 // controls
 app.get('/fetchcontrols', (req, res)=>{
-    const sql = "SELECT * FROM controls";
+    const sql = "SELECT gpio, state FROM outputs";
     db.query(sql, (err, data)=>{
         if (err) return console.log('An error occured');
         res.json(data);
@@ -50,37 +49,20 @@ app.get('/fetchcontrols', (req, res)=>{
 })
 
 app.get('/controls', (req, res)=>{
-    let control = req.query.control;
-    db.query(`SELECT ${control} FROM controls`, (err, data)=>{
+    let gpio = req.query.gpio;
+    db.query(`SELECT state FROM outputs WHERE gpio = '${gpio}'`, (err, data)=>{
         let value;
-        if (data[0].fan == 0){
+        if (data[0].state == 0){
             value = 1;
         }
-        if (data[0].fan == 1){
+        if (data[0].state == 1){
             value = 0;
         }
-        if (data[0].buzzer == 0){
-            value = 1;
-        }
-        if (data[0].buzzer == 1){
-            value = 0;
-        }
-        if (data[0].led == 0){
-            value = 1;
-        }
-        if (data[0].led == 1){
-            value = 0;
-        }
-
-        // console.log(value)
-        const sql = `UPDATE controls SET ${control} = ${value}`;
+        
+        const sql = `UPDATE outputs SET state = ${value} WHERE gpio = '${gpio}'`;
         db.query(sql, (err, data)=>{
-            // if (err) return console.log(err);
-            if (err) return console.log('An error occured');
-            // console.log(data)
-            res.json({status: 200, changed: control, on: value});
-            // console.log("Data changed")
-            // res.json()
+            if (err) return res.json({status: 400, msg: "Failed to activate gpio"});
+            res.json({status: 200, changed: gpio, on: value});
         })
     })
     
