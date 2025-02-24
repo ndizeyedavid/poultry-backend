@@ -33,7 +33,10 @@ db.on("connect", (e) => {
 app.get("/data", (req, res) => {
   const sql = "SELECT * FROM tbl_temperature";
   db.query(sql, (err, data) => {
-    if (err) return res.json(err);
+    if (err)
+      return res
+        .status(500)
+        .json({ message: "Failed to fetch data", error: err.message });
     // console.log(data);
     return res.json(data);
   });
