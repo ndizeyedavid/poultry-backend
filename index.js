@@ -72,6 +72,22 @@ app.get("/controls", (req, res) => {
   });
 });
 
+app.post("/insert", (req, res) => {
+  const { temperature, humidity, airQuality, location, timestamp } = req.body;
+
+  const sql =
+    "INSERT INTO tbl_temperature(temperature, humidity, gaz) values(?, ?, ?)";
+
+  db.query(sql, [temperature, humidity, airQuality], (err, result) => {
+    if (err)
+      return res
+        .status(500)
+        .json({ message: "Unable to insert data", error: err.message });
+
+    res.status(201).json({ message: "Recorded data inserted successfully" });
+  });
+});
+
 app.get("/", (req, res) => {
   res.json({ msg: "Api working well" });
 });
