@@ -13,10 +13,11 @@ app.listen(port, () => {
 });
 
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "poultry",
+  host: "6orij.h.filess.io",
+  user: "poultry_properlyno",
+  password: "1b13069fc6acb1e35f6dff0b7754f86e8d1a4315",
+  database: "poultry_properlyno",
+  port: "3305",
 });
 db.on("error", (err) => {
   console.log("Database connection failed \n" + err);
