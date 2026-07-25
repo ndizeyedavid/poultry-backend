@@ -55,25 +55,45 @@ app.get("/average", (req, res) => {
 app.get("/fetchcontrols", (req, res) => {
   const sql = "SELECT gpio, state FROM outputs";
   db.query(sql, (err, data) => {
-    if (err) return console.log("An error occured");
+    if (err)
+      return res
+        .status(500)
+        .json({ status: 500, msg: "Failed to fetch controls", error: err.message });
     res.json(data);
   });
 });
 
 app.get("/controls", (req, res) => {
-  let gpio = req.query.gpio;
-  db.query(`SELECT state FROM outputs WHERE gpio = '${gpio}'`, (err, data) => {
-    let value;
-    if (data[0].state == 0) {
-      value = 1;
-    }
-    if (data[0].state == 1) {
-      value = 0;
+  const gpio = req.query.gpio;
+  const stateParam = req.query.state;
+
+  if (!gpio)
+    return res.status(400).json({ status: 400, msg: "gpio query parameter is required" });
+
+  db.query("SELECT state FROM outputs WHERE gpio = ?", [gpio], (err, data) => {
+    if (err)
+      return res
+        .status(500)
+        .json({ status: 500, msg: "Database error", error: err.message });
+
+    if (!data.length)
+      return res.status(404).json({ status: 404, msg: `Control '${gpio}' not found` });
+
+    const currentState = data[0].state;
+    let value = currentState;
+
+    if (stateParam === "0" || stateParam === "1") {
+      value = parseInt(stateParam, 10);
+    } else {
+      value = currentState === 0 ? 1 : 0;
     }
 
-    const sql = `UPDATE outputs SET state = ${value} WHERE gpio = '${gpio}'`;
-    db.query(sql, (err, data) => {
-      if (err) return res.json({ status: 400, msg: "Failed to activate gpio" });
+    const sql = "UPDATE outputs SET state = ? WHERE gpio = ?";
+    db.query(sql, [value, gpio], (err2) => {
+      if (err2)
+        return res
+          .status(500)
+          .json({ status: 500, msg: "Failed to update gpio", error: err2.message });
       res.json({ status: 200, changed: gpio, on: value });
     });
   });

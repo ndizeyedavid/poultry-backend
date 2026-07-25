@@ -7,6 +7,11 @@ CREATE TABLE IF NOT EXISTS `outputs` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `outputs` (`gpio`, `state`)
+SELECT 'fan', 0
+FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM `outputs` WHERE `gpio` = 'fan');
+
 -- Table structure for table `tbl_temperature`
 CREATE TABLE IF NOT EXISTS `tbl_temperature` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
