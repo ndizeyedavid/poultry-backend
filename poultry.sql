@@ -33,6 +33,13 @@ CREATE TABLE `outputs` (
   `state` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `outputs`
+--
+
+INSERT INTO `outputs` (`id`, `gpio`, `state`) VALUES (1, '19', 0);
+INSERT INTO `outputs` (`id`, `gpio`, `state`) VALUES (2, '14', 0);
+
 -- --------------------------------------------------------
 
 --

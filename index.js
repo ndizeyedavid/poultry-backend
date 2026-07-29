@@ -16,12 +16,19 @@ app.listen(port, () => {
 });
 
 const db = mysql.createConnection({
-  host: "ib2zgu.h.filess.io",
-  user: "poultry_nowexactam",
-  password: "bf8d8b3ac110f71365a2f75eeaa1343437d18cda",
-  database: "poultry_nowexactam",
-  port: "3307",
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "poultry",
+  port: "3306",
 });
+// const db = mysql.createConnection({
+//   host: "ib2zgu.h.filess.io",
+//   user: "poultry_nowexactam",
+//   password: "bf8d8b3ac110f71365a2f75eeaa1343437d18cda",
+//   database: "poultry_nowexactam",
+//   port: "3307",
+// });
 db.on("error", (err) => {
   console.log("Database connection failed \n" + err);
 });
@@ -56,9 +63,11 @@ app.get("/fetchcontrols", (req, res) => {
   const sql = "SELECT gpio, state FROM outputs";
   db.query(sql, (err, data) => {
     if (err)
-      return res
-        .status(500)
-        .json({ status: 500, msg: "Failed to fetch controls", error: err.message });
+      return res.status(500).json({
+        status: 500,
+        msg: "Failed to fetch controls",
+        error: err.message,
+      });
     res.json(data);
   });
 });
@@ -68,7 +77,9 @@ app.get("/controls", (req, res) => {
   const stateParam = req.query.state;
 
   if (!gpio)
-    return res.status(400).json({ status: 400, msg: "gpio query parameter is required" });
+    return res
+      .status(400)
+      .json({ status: 400, msg: "gpio query parameter is required" });
 
   db.query("SELECT state FROM outputs WHERE gpio = ?", [gpio], (err, data) => {
     if (err)
@@ -77,7 +88,9 @@ app.get("/controls", (req, res) => {
         .json({ status: 500, msg: "Database error", error: err.message });
 
     if (!data.length)
-      return res.status(404).json({ status: 404, msg: `Control '${gpio}' not found` });
+      return res
+        .status(404)
+        .json({ status: 404, msg: `Control '${gpio}' not found` });
 
     const currentState = data[0].state;
     let value = currentState;
@@ -91,9 +104,11 @@ app.get("/controls", (req, res) => {
     const sql = "UPDATE outputs SET state = ? WHERE gpio = ?";
     db.query(sql, [value, gpio], (err2) => {
       if (err2)
-        return res
-          .status(500)
-          .json({ status: 500, msg: "Failed to update gpio", error: err2.message });
+        return res.status(500).json({
+          status: 500,
+          msg: "Failed to update gpio",
+          error: err2.message,
+        });
       res.json({ status: 200, changed: gpio, on: value });
     });
   });
