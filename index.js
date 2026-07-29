@@ -369,7 +369,7 @@ app.get("/average", requireAuth, async (_req, res) => {
   }
 });
 
-app.get("/fetchcontrols", requireAuth, async (_req, res) => {
+app.get("/fetchcontrols", async (_req, res) => {
   try {
     const controls = await fetchControls();
     return res.json(controls);
