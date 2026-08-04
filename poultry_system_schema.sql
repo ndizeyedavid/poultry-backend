@@ -1,8 +1,22 @@
 -- Active: 1784986557756@@ib2zgu.h.filess.io@3307@poultry_nowexactam
-CREATE DATABASE poultry_system
+CREATE DATABASE IF NOT EXISTS poultry_system
     DEFAULT CHARACTER SET = 'utf8mb4';
 
 USE poultry_system;
+
+-- Table structure for table `users` (farmer accounts)
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` VARCHAR(64) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `role` VARCHAR(20) NOT NULL DEFAULT 'farmer',
+  `is_verified` TINYINT(1) NOT NULL DEFAULT 0,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 -- Table structure for table `outputs`
 CREATE TABLE IF NOT EXISTS `outputs` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
